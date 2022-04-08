@@ -1,0 +1,12 @@
+.vscode
+Assets/*.json
+Assets/*.json.meta
+Logs
+Library
+obj
+Packages
+Temp
+UserSettings
+ProjectSettings
+*.csproj
+*.sln
