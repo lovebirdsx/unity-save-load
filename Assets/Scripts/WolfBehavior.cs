@@ -66,26 +66,26 @@ public class WolfBehavior : MonoBehaviour
 
     private void PrepareToSaveObjectState(ObjectState objectState)
     {
-        objectState.genericValues["WolfBehavior.speed"] = speed;
-        objectState.genericValues["WolfBehavior.timeToWalkRemaining"] = timeToWalkRemaining;
-        objectState.genericValues["WolfBehavior.walkingLeft"] = walkingLeft;
+        objectState.genericValueMap["WolfBehavior.speed"] = speed.ToString();
+        objectState.genericValueMap["WolfBehavior.timeToWalkRemaining"] = timeToWalkRemaining.ToString();
+        objectState.genericValueMap["WolfBehavior.walkingLeft"] = walkingLeft.ToString();
         if (favoriteTree != null)
         {
-            objectState.genericValues["WolfBehavior.favoriteTree"] = favoriteTree.GetComponent<DynamicObject>().objectState.guid;
-        } else if (objectState.genericValues.ContainsKey("WolfBehavior.favoriteTree"))
+            objectState.genericValueMap["WolfBehavior.favoriteTree"] = favoriteTree.GetComponent<DynamicObject>().objectState.guid;
+        } else if (objectState.genericValueMap.ContainsKey("WolfBehavior.favoriteTree"))
         {
-            objectState.genericValues.Remove("WolfBehavior.favoriteTree");
+            objectState.genericValueMap.Remove("WolfBehavior.favoriteTree");
         }
     }
 
     private void LoadObjectState(ObjectState objectState)
     {
-        speed = Convert.ToSingle(objectState.genericValues["WolfBehavior.speed"]);
-        timeToWalkRemaining = Convert.ToSingle(objectState.genericValues["WolfBehavior.timeToWalkRemaining"]);
-        walkingLeft = Convert.ToBoolean(objectState.genericValues["WolfBehavior.walkingLeft"]);
-        if (objectState.genericValues.ContainsKey("WolfBehavior.favoriteTree"))
+        speed = Convert.ToSingle(objectState.genericValueMap["WolfBehavior.speed"]);
+        timeToWalkRemaining = Convert.ToSingle(objectState.genericValueMap["WolfBehavior.timeToWalkRemaining"]);
+        walkingLeft = Convert.ToBoolean(objectState.genericValueMap["WolfBehavior.walkingLeft"]);
+        if (objectState.genericValueMap.ContainsKey("WolfBehavior.favoriteTree"))
         {
-            favoriteTree = SaveUtils.FindDynamicObjectByGuid(Convert.ToString(objectState.genericValues["WolfBehavior.favoriteTree"])).gameObject;
+            favoriteTree = SaveUtils.FindDynamicObjectByGuid(Convert.ToString(objectState.genericValueMap["WolfBehavior.favoriteTree"])).gameObject;
         }
     }
 }

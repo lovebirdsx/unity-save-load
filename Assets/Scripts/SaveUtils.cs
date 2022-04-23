@@ -1,8 +1,21 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+
+[Serializable]
+class StateList {
+    public List<ObjectState> states;
+
+    public StateList(List<ObjectState> states) {
+        this.states = states;
+    }
+
+    public StateList(ObjectState state) {
+        this.states = new List<ObjectState>();
+        this.states.Add(state);
+    }
+}
 
 public class SaveUtils
 {
@@ -13,8 +26,6 @@ public class SaveUtils
 
     public static string SAVE_OBJECTS_PATH = Application.dataPath + "/objects.json";
     public static string SAVE_SARA_PATH = Application.dataPath + "/sara.json";
-
-    private static JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None };
 
     private static Dictionary<string, GameObject> LoadPrefabs(string prefabsPath)
     {
@@ -95,13 +106,13 @@ public class SaveUtils
         {
             throw new InvalidOperationException("Expected only 1 object state for Sara");
         }
-        WriteJson(path, objectStates[0]);
+        WriteJson(path, new StateList(objectStates));
         Debug.Log("Saved Sara to: " + path);
     }
 
     private static void LoadSara(string path)
     {
-        ObjectState objectState = ReadJson<ObjectState>(path);
+        ObjectState objectState = ReadJson<StateList>(path).states[0];
 
         GameObject sara = GetSara();
         if (sara == null)
@@ -117,27 +128,28 @@ public class SaveUtils
     private static void SaveDynamicObjects(string path)
     {
         List<ObjectState> objectStates = ObjectState.SaveObjects(GetRootDynamicObject());
-        WriteJson(path, objectStates);
+        WriteJson(path, new StateList(objectStates));
         Debug.Log("Saved objects to: " + path);
     }
 
     private static void LoadDynamicObjects(string path)
     {
-        List<ObjectState> objectStates = ReadJson<List<ObjectState>>(path);
+        List<ObjectState> objectStates = ReadJson<StateList>(path).states;
         ObjectState.LoadObjects(prefabs, objectStates, GetRootDynamicObject());
         Debug.Log("Loaded objects from: " + path);
     }
 
-    private static void WriteJson<T>(string path, T obj)
+    private static void WriteJson(string path, object obj)
     {
-        string json = JsonConvert.SerializeObject(obj, Formatting.Indented, jsonSerializerSettings);
+        var json = JsonUtility.ToJson(obj, true);
+        Debug.Log($"{json}");
         File.WriteAllText(path, json);
     }
 
     private static T ReadJson<T>(string path)
     {
         string json = File.ReadAllText(path);
-        return JsonConvert.DeserializeObject<T>(json, jsonSerializerSettings);
+        return JsonUtility.FromJson<T>(json);
     }
 
     public static float[] ConvertFromVector2(Vector2 vector2)

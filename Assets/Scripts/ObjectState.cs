@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class ObjectState
+public class ObjectState : ISerializationCallbackReceiver
 {
     public string guid;
     public string objectName;
@@ -13,7 +13,15 @@ public class ObjectState
     public bool isPrefab;
     public string prefabGuid;
     public string[] childrenGuids;
-    public Dictionary<string, object> genericValues;
+    
+    [SerializeField]
+    List<string> genericKeys = new List<string>();
+
+    [SerializeField]
+    List<string> genericValues = new List<string>();
+
+    public Dictionary<string, string> genericValueMap = new Dictionary<string, string>();
+
     public ObjectState()
     {
         if (string.IsNullOrEmpty(guid))
@@ -22,7 +30,6 @@ public class ObjectState
         }
         isPrefab = false;
         prefabGuid = guid;
-        genericValues = new Dictionary<string, object>();
     }
 
     private void PrepareToSave(GameObject gameObject)
@@ -170,5 +177,23 @@ public class ObjectState
     public static string CreateGuid()
     {
         return Guid.NewGuid().ToString();
+    }
+
+    public void OnBeforeSerialize() {
+        this.genericKeys.Clear();
+        this.genericValues.Clear();
+        foreach (var item in this.genericValueMap) 
+        {
+            this.genericKeys.Add(item.Key);
+            this.genericValues.Add(item.Value);
+        }
+    }
+
+    public void OnAfterDeserialize() {
+        this.genericValueMap.Clear();
+        for (int i = 0; i < this.genericKeys.Count; i++)
+        {
+            this.genericValueMap.Add(this.genericKeys[i], this.genericValues[i]);
+        }
     }
 }

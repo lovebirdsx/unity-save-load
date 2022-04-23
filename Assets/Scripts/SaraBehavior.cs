@@ -56,11 +56,11 @@ public class SaraBehavior : MonoBehaviour
             moveVector.Set(0, 0);
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftBracket))
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             SaveUtils.DoSave();
         }
-        if (Input.GetKeyDown(KeyCode.RightBracket))
+        if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             SaveUtils.DoLoad();
         }
@@ -101,8 +101,8 @@ public class SaraBehavior : MonoBehaviour
 
     private void PrepareToSaveObjectState(ObjectState objectState)
     {
-        objectState.genericValues["SaraBehavior.treeContainer"] = treeContainer.GetComponent<DynamicObject>().objectState.guid;
-        objectState.genericValues["SaraBehavior.wolfContainer"] = wolfContainer.GetComponent<DynamicObject>().objectState.guid;
+        objectState.genericValueMap["SaraBehavior.treeContainer"] = treeContainer.GetComponent<DynamicObject>().objectState.guid;
+        objectState.genericValueMap["SaraBehavior.wolfContainer"] = wolfContainer.GetComponent<DynamicObject>().objectState.guid;
     }
 
     private void LoadObjectState(ObjectState objectState)
@@ -111,7 +111,7 @@ public class SaraBehavior : MonoBehaviour
         Vector2 position = SaveUtils.ConvertToVector2(objectState.position);
         transform.position = new Vector3(position.x, position.y, 0);
         // Load the reference to the containers to place new trees/wolves under
-        treeContainer = SaveUtils.FindDynamicObjectByGuid(Convert.ToString(objectState.genericValues["SaraBehavior.treeContainer"])).gameObject;
-        wolfContainer = SaveUtils.FindDynamicObjectByGuid(Convert.ToString(objectState.genericValues["SaraBehavior.wolfContainer"])).gameObject;
+        treeContainer = SaveUtils.FindDynamicObjectByGuid(Convert.ToString(objectState.genericValueMap["SaraBehavior.treeContainer"])).gameObject;
+        wolfContainer = SaveUtils.FindDynamicObjectByGuid(Convert.ToString(objectState.genericValueMap["SaraBehavior.wolfContainer"])).gameObject;
     }
 }
