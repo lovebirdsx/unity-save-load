@@ -180,8 +180,6 @@ public class ObjectState : ISerializationCallbackReceiver
     }
 
     public void OnBeforeSerialize() {
-        this.genericKeys.Clear();
-        this.genericValues.Clear();
         foreach (var item in this.genericValueMap) 
         {
             this.genericKeys.Add(item.Key);
@@ -190,7 +188,6 @@ public class ObjectState : ISerializationCallbackReceiver
     }
 
     public void OnAfterDeserialize() {
-        this.genericValueMap.Clear();
         for (int i = 0; i < this.genericKeys.Count; i++)
         {
             this.genericValueMap.Add(this.genericKeys[i], this.genericValues[i]);
